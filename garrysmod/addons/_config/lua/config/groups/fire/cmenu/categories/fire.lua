@@ -1,0 +1,1 @@
+octogui.cmenu.registerCategory('fire')

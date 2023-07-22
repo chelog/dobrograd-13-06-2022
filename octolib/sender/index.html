@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Send lua to GMod server</title>
+	<style type="text/css" media="screen">
+		#editor {
+			position: absolute;
+			top: 0;
+			right: 0;
+			bottom: 0;
+			left: 0;
+		}
+
+		.swal-text {
+			white-space: pre;
+			background: #f4f4f4;
+			border: 1px solid #ddd;
+			color: #666;
+			page-break-inside: avoid;
+			font-family: monospace;
+			font-size: 15px;
+			line-height: 1.6;
+			max-width: 100%;
+			overflow: auto;
+			padding: 1em 1.5em;
+			display: block;
+			word-wrap: break-word;
+		}
+
+		.swal-footer {
+			margin-top: 0;
+		}
+
+		#status {
+			pointer-events: none;
+			position: absolute;
+			top: 10px;
+			right: 10px;
+			width: 16px;
+			height: 16px;
+			background: #ff4444;
+			border-radius: 1024px;
+			transition: background 0.5s;
+		}
+
+		#status::before {
+			color: #ff4444;
+			content: 'Disconnected';
+			position: absolute;
+			right: 26px;
+			text-align: right;
+			transition: color 0.5s;
+		}
+
+		#status.active {
+			background: #44ff44;
+		}
+
+		#status.active::before {
+			color: #44ff44;
+			content: '';
+		}
+	</style>
+
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.21.1/axios.min.js" crossorigin="anonymous"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.2/sweetalert.min.js" crossorigin="anonymous"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.12/ace.min.js" crossorigin="anonymous"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.12/theme-monokai.min.js" crossorigin="anonymous"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.12/mode-lua.min.js" crossorigin="anonymous"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.12/snippets/lua.min.js" crossorigin="anonymous"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.12/ext-error_marker.min.js" crossorigin="anonymous"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.12/ext-code_lens.min.js" crossorigin="anonymous"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.12/ext-beautify.min.js" crossorigin="anonymous"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.12/ext-whitespace.min.js" crossorigin="anonymous"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.12/ext-searchbox.min.js" crossorigin="anonymous"></script>
+</head>
+<body>
+	<div id="editor">-- use 'return' statement or global function 'reply(data)' to get response</div>
+	<div id="status"></div>
+	<script>
+		const editor = ace.edit("editor")
+		editor.setTheme("ace/theme/monokai")
+		editor.session.setMode("ace/mode/lua")
+		editor.setPrintMarginColumn(-1)
+		editor.setFontSize(15)
+
+		editor.setValue(localStorage.getItem('lastCode') ?? editor.getValue())
+		editor.on('change', () => localStorage.setItem('lastCode', editor.getValue()))
+
+		const indicator = document.getElementById('status')
+		const setStatus = online => indicator.classList[online ? 'add' : 'remove']('active')
+
+		const checkStatus = () => axios.get('/status')
+			.then(response => setStatus(Boolean(response.data)))
+			.catch(() => setStatus(false))
+		checkStatus()
+		setInterval(checkStatus, 2000)
+
+		document.addEventListener('keydown', ({ ctrlKey, key }) => {
+			if (ctrlKey && key === 'Enter')
+				axios.post('/eval', editor.getValue(), {
+					headers: {"Content-Type": "text/plain"},
+				}).then(({ status, data }) => {
+					if (status === 200)
+						swal({
+							text: typeof(data.data) === 'object' ? JSON.stringify(data.data, null, '  ') : (data.data ?? data.error ?? 'nil').toString(),
+							icon: data.error ? 'error' : 'success',
+						})
+					else
+						swal({
+							text: 'Cannot connect to proxy server',
+							icon: 'error',
+						})
+				})
+		})
+	</script>
+</body>
+</html>

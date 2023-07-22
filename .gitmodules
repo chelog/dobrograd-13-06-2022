@@ -1,0 +1,3 @@
+[submodule "octolib"]
+	path = octolib
+	url = ../../gmod/addons/octolib

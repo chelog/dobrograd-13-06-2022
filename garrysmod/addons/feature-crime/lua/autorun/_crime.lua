@@ -1,0 +1,5 @@
+hook.Add('octolib.loaded', 'crime', function()
+	hook.Remove('octolib.loaded', 'crime')
+	octolib.module('hack')
+	octolib.module('lockpick')
+end)

@@ -1,0 +1,72 @@
+FROM ubuntu:18.04 AS base
+LABEL author='Dmitry Antonov' maintainer='chelog@octothorp.team'
+
+RUN dpkg --add-architecture i386 \
+	&& apt update \
+	&& apt upgrade -y \
+	&& apt install -y \
+		ca-certificates \
+		curl \
+		gcc \
+		gdb \
+		git \
+		iproute2 \
+		lib32gcc1 \
+		lib32stdc++6 \
+		lib32tinfo5 \
+		lib32z1 \
+		libstdc++6 \
+		lua5.1 \
+		net-tools \
+		unzip \
+		zlib1g \
+		zlibc \
+	&& curl -sL https://deb.nodesource.com/setup_16.x | bash - \
+   && apt install -y nodejs \
+	&& groupadd -g 999 container \
+	&& useradd -m -d /home/container -u 999 -g container container \
+	&& mkdir -p /home/container/gameserver/steam_cache \
+	&& mkdir -p /home/container/gameserver/garrysmod/cache \
+	&& chown -R container:container /home/container/gameserver \
+	&& chmod 777 -R /home/container/gameserver
+
+# GAME SETUP
+FROM base AS install-gameserver
+WORKDIR /home/container
+USER container
+ENV USER=container HOME=/home/container
+ENV LD_LIBRARY_PATH=/home/container/gameserver/bin
+
+RUN curl -o ./steamcmd_linux.tar.gz https://steamcdn-a.akamaihd.net/client/installer/steamcmd_linux.tar.gz \
+	&& mkdir ./steamcmd \
+	&& tar -xvzf steamcmd_linux.tar.gz -C ./steamcmd \
+	&& rm steamcmd_linux.tar.gz \
+	&& ./steamcmd/steamcmd.sh +quit \
+	&& mkdir -p ./.steam/sdk32 \
+	&& cp -v ./steamcmd/linux32/steamclient.so ./.steam/sdk32/steamclient.so \
+	&& mkdir -p ./.steam/sdk64 \
+	&& cp -v ./steamcmd/linux64/steamclient.so ./.steam/sdk64/steamclient.so
+
+RUN ./steamcmd/steamcmd.sh \
+	+force_install_dir /home/container/gameserver \
+	+login anonymous +app_update 4020 \
+	-validate \
+	-beta NONE \
+	+quit
+
+FROM install-gameserver AS setup-gameserver
+RUN curl -o ./luabin.zip https://files.octothorp.team/s/PiL72CBSBsiBdZc/download \
+	&& mkdir -p ./gameserver/garrysmod/lua/bin \
+	&& unzip -j ./luabin.zip -d ./gameserver/garrysmod/lua/bin \
+	&& rm ./luabin.zip
+
+RUN curl -o ./content.zip -L https://www.dropbox.com/s/al7ruvnda4m8qgf/content.zip?dl=1 \
+	&& mkdir -p ./content/cstrike \
+	&& unzip ./content.zip -d ./content/cstrike \
+	&& rm ./content.zip \
+	&& echo '"mountcfg" {"cstrike" "/home/contrainer/cstrike"}' > /home/container/gameserver/garrysmod/cfg/mount.cfg
+
+EXPOSE 27015/tcp 27015/udp
+
+COPY ./docker/entrypoint.sh /entrypoint.sh
+CMD ["/bin/bash", "/entrypoint.sh"]

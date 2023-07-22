@@ -1,0 +1,26 @@
+image: 'octoteam/gmod-test:latest'
+
+services:
+  - mariadb:latest
+
+variables:
+  GIT_SUBMODULE_STRATEGY: recursive
+  MYSQL_DATABASE: gmod_dbg_dev
+  MYSQL_ROOT_PASSWORD: octoteam ci/cd
+
+stages:
+  - test
+
+test:
+  stage: test
+  script:
+    # copy repo into gmod server
+    - cp -R * /opt/server
+    # move ci configs
+    - cd /opt/server
+    - cp config.ci.ts config.ts
+    - cp server.ci.cfg garrysmod/cfg/server.cfg
+    # run octolib scripts
+    - cd octolib && npm i
+    - npm run setup
+    - npm run test server

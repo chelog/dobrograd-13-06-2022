@@ -1,0 +1,1 @@
+octolib.markers = octolib.markers or {}

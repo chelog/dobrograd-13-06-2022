@@ -1,0 +1,7 @@
+octoinv.registerMarketItem('glock', {									-- [string] market item ID
+	name = 'Glock',															-- [string] print name
+	icon = 'octoteam/icons/gun_pistol.png',							-- [string] icon for vgui
+	parent = 'weapon',														-- [string] parent class, must be registered before current item
+})
+
+-- more to come

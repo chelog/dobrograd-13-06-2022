@@ -1,0 +1,54 @@
+octoinv.registerItem('weapon', {                                -- [string] item ID
+	name = 'Оружие',                                            -- [string] print name
+	class = 'spawned_weapon',                                   -- [string] (class of dropped ent)
+	model = 'models/weapons/w_pist_glock18.mdl',                -- [string] (model of dropped ent)
+	icon = 'octoteam/icons/gun_pistol.png',                     -- [string] icon for vgui
+	mass = 1,                                                   -- [float] item mass
+	volume = 1,                                                 -- [float] item volume
+	nostack = true,                                             -- [bool] (whether this item is not stackable)
+	nodespawn = true,											-- [bool] (whether this item should never despawn when dropped)
+	pickup = function(ply, ent)                                 -- [function(Player, Entity)] (pickup function, returns table to override data in item)
+		local class = ent:GetWeaponClass()
+		local name = ent.itemName or weapons.Get(class).PrintName or weapons.Get(class).Name
+		return {
+			name = name,
+			icon = ent.itemIcon,
+			model = ent:GetModel(),
+			ent = {
+				class = class,
+				amount = ent:Getamount(),
+				clip1 = ent.clip1,
+				clip2 = ent.clip2,
+				ammo = ent.ammoadd,
+			}
+		}
+	end,
+	drop = function(ply, item, amount, posData)                 -- [function(Player, Item, int, table(Vector pos, Angles ang, Vector vel))]
+		local ent = ents.Create('spawned_weapon')               --     (drop function, return false or nil to prevent drop, otherwise created Entity)
+		ent:SetPos(posData.pos)
+		ent:SetAngles(posData.ang)
+		ent:SetModel(item:GetData('model'))
+
+		local data = item:GetData('ent')
+		ent:Setamount(data.amount)
+		ent:SetWeaponClass(data.class)
+		if data.clip1 then ent.clip1 = data.clip1 end
+		if data.clip2 then ent.clip2 = data.clip2 end
+		if data.ammoadd then ent.ammoadd = data.ammo end
+		if item.name then ent.itemName = item.name end
+		if item.icon then ent.itemIcon = item.icon end
+
+		ent:Spawn()
+		ent:Activate()
+
+		local phys = ent:GetPhysicsObject()
+		if IsValid(phys) then
+			phys:Wake()
+			phys:SetVelocity(posData.vel)
+		end
+
+		return ent, 1
+	end,
+})
+
+-- more to come

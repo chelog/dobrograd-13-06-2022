@@ -1,0 +1,16 @@
+"darkrp"
+{
+	"base"		"sandbox"
+    "category"  "rp"
+    "title"  "DarkRP"
+    "version"   "8.8.8"
+    "menusystem"	"1"
+
+    "author_name"   "octoteam"
+    "author_email"  "chelog@octothorp.team"
+    "author_url"    "https://octothorp.team"
+
+    "icon"  ""
+    "info"  ""
+    "hide"  "0"
+}

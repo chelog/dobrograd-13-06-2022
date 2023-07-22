@@ -1,0 +1,1 @@
+octolib.notify = octolib.notify or {}

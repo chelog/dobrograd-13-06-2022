@@ -1,0 +1,5 @@
+ENT.Type 		= 'anim'
+ENT.Base 		= 'base_entity'
+ENT.PrintName	= 'Контейнер доставки'
+ENT.Category	= 'Доброград'
+ENT.Author		= 'octoteam'

@@ -1,0 +1,59 @@
+networks:
+  default:
+    labels: &labels
+      - project=dobrograd
+
+volumes:
+  steam-cache:
+  game-cache:
+
+services:
+
+  mariadb:
+    labels: *labels
+    container_name: dbg_db
+    image: mariadb:10.7
+    environment:
+      MARIADB_ALLOW_EMPTY_ROOT_PASSWORD: true
+      MARIADB_DATABASE: gmod_dobrograd
+    volumes:
+      - ./docker/runtime-data/mysql:/var/lib/mysql
+    ports:
+      - '3306:3306'
+    healthcheck:
+      test: ['CMD', 'mysqladmin', 'ping', '--silent']
+      interval: 2s
+      retries: 15
+
+  gameserver:
+    labels: *labels
+    container_name: dbg_game
+    stdin_open: true
+    tty: true
+    build:
+      context: .
+      dockerfile: ./docker/Dockerfile.local
+      labels: *labels
+      target: setup-gameserver
+    environment:
+      STARTUP: ./gameserver-entrypoint.sh
+    ports:
+      - '8888:8888' # web interface for code runner
+      - '27099:27099' # luadev
+      - '27015:27015/tcp'
+      - '27015:27015/udp'
+    volumes:
+      - steam-cache:/home/container/gameserver/steam_cache
+      - game-cache:/home/container/gameserver/garrysmod/cache
+      - ./gameserver-entrypoint.sh:/home/container/gameserver-entrypoint.sh
+      - ./docker/runtime-data/garrysmod-data:/home/container/gameserver/garrysmod/data
+      - ./garrysmod/addons:/home/container/gameserver/garrysmod/addons
+      - ./garrysmod/gamemodes/darkrp:/home/container/gameserver/garrysmod/gamemodes/darkrp
+      - ./octolib:/home/container/gameserver/octolib
+      - ./config.example.ts:/home/container/gameserver/config.example.ts
+      - ./config.ts:/home/container/gameserver/config.ts
+      - ./server.cfg:/home/container/gameserver/garrysmod/cfg/server.cfg
+    depends_on:
+      mariadb:
+        condition: service_healthy
+    restart: unless-stopped
