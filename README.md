@@ -20,7 +20,7 @@
 # если работаем под Windows, все запускаем внутри WSL
 
 # скопируем репозиторий к себе на устройство
-git clone --recurse-submodules git@ssh.octo.gg:dobrograd/gmod dobrograd
+git clone --recurse-submodules https://gitlab.octo.gg/public-projects/dobrograd-13-06-2022 dobrograd
 cd dobrograd
 
 # скопируем и настроим конфиг сервера
@@ -54,7 +54,7 @@ docker compose -p gmod down
 docker system prune -a
 ```
 
-Подключиться к серверу можно по адресу, полученному из `wsl hostname -I`, или же можно поставить `wsl2host`, про который говорится в настройке окружения
+Подключиться к серверу можно по адресу, полученному из `wsl hostname -I`, или же можно поставить `wsl2host`, про который говорится в [настройке окружения](https://wiki.octothorp.team/ru/code)
 Для некоторых скриптов есть поддержка прямо в расширении VS Code, но сначала надо хотя бы раз вручную запустить `up`-скрипт через терминал:
 
 ![](https://i.imgur.com/0318kXb.png) ![](https://i.imgur.com/WpVzAEc.png)
