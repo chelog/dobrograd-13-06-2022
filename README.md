@@ -12,6 +12,8 @@
 
 ---
 
+# [-> Справка по разработке <-](https://wiki.octothorp.team/ru/code)
+
 # Установка
 
 ```sh
