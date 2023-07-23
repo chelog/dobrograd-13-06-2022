@@ -55,7 +55,7 @@ RUN ./steamcmd/steamcmd.sh \
 	+quit
 
 FROM install-gameserver AS setup-gameserver
-RUN curl -o ./luabin.zip https://files.octothorp.team/s/PiL72CBSBsiBdZc/download \
+RUN curl -o ./luabin.zip https://cloud.octo.gg/s/oKHm9xXjcLDXwpf/download \
 	&& mkdir -p ./gameserver/garrysmod/lua/bin \
 	&& unzip -j ./luabin.zip -d ./gameserver/garrysmod/lua/bin \
 	&& rm ./luabin.zip
