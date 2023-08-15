@@ -18,7 +18,7 @@ const config: DobrogradConfig = {
 	language: 'ru',
 	workshopCollection: 570795184,
 	gamemode: 'darkrp',
-	map: 'rp_evocity_dbg_220222',
+	map: 'rp_evocity_dbg_230226',
 	maxPlayers: 16,
 	hibernateThink: true,
 
