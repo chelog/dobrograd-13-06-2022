@@ -25,6 +25,18 @@ surface.CreateFont('f4.normal', {
 	size = 27,
 	weight = 350,
 })
+surface.CreateFont('f4.charset-label', {
+	font = 'Calibri',
+	extended = true,
+	size = 25,
+	weight = 350,
+})
+surface.CreateFont('f4.charset-text', {
+	font = 'Calibri',
+	extended = true,
+	size = 19,
+	weight = 100,
+})
 surface.CreateFont('f4.normal-sh', {
 	font = 'Calibri',
 	extended = true,
