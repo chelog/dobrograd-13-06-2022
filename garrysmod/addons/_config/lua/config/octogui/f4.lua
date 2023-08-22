@@ -316,6 +316,7 @@ local options = {{
 			f.e_name = e
 
 			function SetEntryName(text)
+				if not text then return end
 				e:SetText(text)
 			end
 		end
@@ -347,6 +348,7 @@ local options = {{
 
 			f.e_desc = e
 			function SetEntryDesc(text)
+				if not text then return end
 				e:SetText(text)
 			end
 		end
