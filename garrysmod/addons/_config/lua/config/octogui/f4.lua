@@ -55,21 +55,6 @@ local plyModels = {
 	{'models/humans/octo/male_09_04.mdl', L.male .. ' 9' .. ' (' .. L.variant .. ' 4' .. ')'},
 }
 
-local joblistRU = {
-	'Гражданин',
-	'Местный',
-	'Повар',
-	'Токарь',
-	'Старший токарь',
-	'Механик',
-	'Городской работник',
-	'Фармацевт',
-	'Провизор',
-	'Священник',
-	'Бездомный',
-	'Старый бездомный',
-}
-
 -- defkey, cvar, userinfo, name
 local k_list = {
 	{L.character},
