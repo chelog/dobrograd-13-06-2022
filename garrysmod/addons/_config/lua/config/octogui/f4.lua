@@ -295,6 +295,7 @@ local options = {{
 				text = utf8.sub(text, 1, 35)
 				self:SetText(octolib.string.camel(octolib.string.stripNonWord(text)) .. (text:endsWith(' ') and ' ' or ''))
 				self:SetCaretPos(oldC - (utf8.len(self:GetText()) ~= oldLen and 1 or 0))
+				cvName:SetString(self:GetText())
 			end
 			e.PaintOffset = 5
 
@@ -637,8 +638,8 @@ local options = {{
 			end
 
 			local function LoadCharPreset(value)
-				f.e_name:SetText(value['dbg_name'])
-				f.e_desc:SetText(value['dbg_desc'])
+				f.e_name:SetValue(value['dbg_name'])
+				f.e_desc:SetValue(value['dbg_desc'])
 				for i = 1, #f.e_job.Choices do
 					if f.e_job:GetOptionData(i) == value['dbg_job'] then
 						f.e_job:ChooseOptionID(i)
@@ -657,22 +658,17 @@ local options = {{
 						break
 					end
 				end
-
-				cvName:SetString(value['dbg_name']) -- fix reload F4
-				octolib.vars.set('dbg_desc',value['dbg_desc'])
 			end
 
 			local function GetRusJobName(value)
-				local jbname
 				for _, job in ipairs(RPExtraTeams) do
 					if not job.noPreference and (not job.hidden or isfunction(job.customCheck) and select(1, job.customCheck(ply))) then
 						if value['dbg_job'] == job.command then
-							jbname = job.name
-							break
+							return job.name
 						end
 					end
 				end
-				return jbname
+				return nil
 			end
 
 			local function UpdateCharSet() --Update characters
