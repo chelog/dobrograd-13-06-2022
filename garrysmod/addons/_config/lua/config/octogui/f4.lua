@@ -614,13 +614,13 @@ local options = {{
 			chs:Dock(FILL)
 			chs:DockMargin(5,5,5,5)
 
-			local function DeleteCharPreset(key)
+			local function deleteCharPreset(key)
 				local deltable = octolib.vars.get('dbg_charset')
 				table.remove(deltable, key)
 				octolib.vars.set('dbg_charset', deltable)
 			end
 
-			local function SaveCharPreset(s)
+			local function saveCharPreset(s)
 				local chardelete = octolib.vars.get('dbg_charset')
 				local charVal = 1
 				if next(chardelete) ~= nil then
@@ -637,7 +637,7 @@ local options = {{
 				octolib.vars.set('dbg_charset', chardelete)
 			end
 
-			local function LoadCharPreset(value)
+			local function loadCharPreset(value)
 				f.e_name:SetValue(value['dbg_name'])
 				f.e_desc:SetValue(value['dbg_desc'])
 				for i = 1, #f.e_job.Choices do
@@ -660,7 +660,7 @@ local options = {{
 				end
 			end
 
-			local function GetRusJobName(value)
+			local function getRusJobName(value)
 				for _, job in ipairs(RPExtraTeams) do
 					if not job.noPreference and (not job.hidden or isfunction(job.customCheck) and select(1, job.customCheck(ply))) then
 						if value['dbg_job'] == job.command then
@@ -671,7 +671,7 @@ local options = {{
 				return nil
 			end
 
-			local function UpdateCharSet() --Update characters
+			local function updateCharSet()
 				chs:GetCanvas():Clear()
 				local chartable = octolib.vars.get('dbg_charset')
 				for key, value in pairs(chartable) do
@@ -728,7 +728,7 @@ local options = {{
 					labJob:SetFont('f4.charset-text')
 					labJob:SetContentAlignment(4)
 					labJob:SetTall(35)
-					labJob:SetText(GetRusJobName(value))
+					labJob:SetText(getRusJobName(value))
 					labJob:SetSize(400,400)
 					labJob:DockMargin(21,0,10,2)
 					labJob:Dock(LEFT)
@@ -744,7 +744,7 @@ local options = {{
 						self:AlignRight(5)
 					end
 					function chb:DoClick()
-						LoadCharPreset(value)
+						loadCharPreset(value)
 					end
 
 					local chbClear = vgui.Create 'DButton' --Delete
@@ -766,8 +766,8 @@ local options = {{
 					chbClear:AddHint("Удалить")
 					function chbClear:DoClick()
 						Derma_Query('Вы уверены, что хотите удалить этого персонажа?', 'Удаление персонажа', L.yes, function()
-							DeleteCharPreset(key)
-							UpdateCharSet()
+							deleteCharPreset(key)
+							updateCharSet()
 						end, L.no)
 					end
 					function chbClear:PerformLayout()
@@ -786,10 +786,10 @@ local options = {{
 			chb:SetEnabled(true)
 			chb:SetText(L.save)
 			chb.DoClick = octolib.fStringRequest("Сохранение", "Напиши название для твоего пресета","",function(s)
-				SaveCharPreset(s)
-				UpdateCharSet()
+				saveCharPreset(s)
+				updateCharSet()
 			end)
-			UpdateCharSet()
+			updateCharSet()
 		end
 	end,
 },{
