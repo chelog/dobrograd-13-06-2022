@@ -678,7 +678,6 @@ local options = {{
 					local charPanel = vgui.Create 'DPanel' --BackPanel
 					charPanel:SetParent(chs)
 					charPanel:Dock(TOP)
-					charPanel:SetSize(260,80)
 					charPanel:DockMargin(0,0,0,10)
 					charPanel:SetTall(85)
 
@@ -693,8 +692,8 @@ local options = {{
 
 					local chname = vgui.Create 'DPanel' --CharacterName
 					chname:SetParent(charPanel)
-					chname:SetSize(150,18)
 					chname:Dock(TOP)
+					chname:SetTall(18)
 					chname:DockMargin(10,5,10,10)
 					chname:SetPaintBackground(false)
 
@@ -706,16 +705,16 @@ local options = {{
 					local labName = chname:Add 'DLabel'
 					labName:SetFont('f4.charset-text')
 					labName:SetContentAlignment(4)
-					labName:SetTall(35)
+					labName:SetTall(25)
+					labName:SetWide(300)
 					labName:SetText(value['dbg_name'])
-					labName:SetSize(400,400)
 					labName:DockMargin(21,0,10,0)
 					labName:Dock(LEFT)
 
 					local chjob = vgui.Create 'DPanel' --CharacterJob
 					chjob:SetParent(charPanel)
-					chjob:SetSize(150,18)
 					chjob:Dock(TOP)
+					chname:SetTall(18)
 					chjob:DockMargin(10,0,10,10)
 					chjob:SetPaintBackground(false)
 
@@ -727,10 +726,10 @@ local options = {{
 					local labJob = chjob:Add 'DLabel'
 					labJob:SetFont('f4.charset-text')
 					labJob:SetContentAlignment(4)
-					labJob:SetTall(35)
+					labJob:SetTall(25)
+					labJob:SetWide(300)
 					labJob:SetText(getRusJobName(value))
-					labJob:SetSize(400,400)
-					labJob:DockMargin(21,0,10,2)
+					labJob:DockMargin(21,0,10,5)
 					labJob:Dock(LEFT)
 
 					local chb = vgui.Create 'DButton' --Load
