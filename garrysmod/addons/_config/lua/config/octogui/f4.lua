@@ -1,8 +1,9 @@
-CreateClientConVar('dbg_name', L.name_and_surname, true, true)
+local cvName = CreateClientConVar('dbg_name', L.name_and_surname, true, true)
 local cvModel = CreateClientConVar('dbg_model', 'models/humans/octo/male_01_01.mdl', true, true)
 local cvSkin = CreateClientConVar('dbg_skin', '0', true, true)
 local cvJob = CreateClientConVar('dbg_job', 'citizen', false, true)
 local cvDesc = CreateClientConVar('dbg_desc', '', true, true)
+octolib.vars.init('dbg_charset', {})
 
 local plyModels = {
 	{'models/humans/octo/female_01.mdl', L.woman .. ' 1', {20}},
@@ -294,6 +295,7 @@ local options = {{
 				text = utf8.sub(text, 1, 35)
 				self:SetText(octolib.string.camel(octolib.string.stripNonWord(text)) .. (text:endsWith(' ') and ' ' or ''))
 				self:SetCaretPos(oldC - (utf8.len(self:GetText()) ~= oldLen and 1 or 0))
+				cvName:SetString(self:GetText())
 			end
 			e.PaintOffset = 5
 
@@ -598,26 +600,195 @@ local options = {{
 		pnl2:DockPadding(5, 5, 5, 5)
 		pnl2:SetPaintBackground(false)
 
-		do -- description
+		do -- charPresets
 			local l = vgui.Create 'DLabel'
 			l:SetParent(pnl2)
 			l:Dock(TOP)
 			l:DockMargin(5,0,5,0)
 			l:SetTall(30)
-			l:SetText(L.desc_character)
+			l:SetText("Персонажи")
 			l:SetFont('f4.normal')
 
-			local e = vgui.Create 'DTextEntry'
-			e:SetParent(pnl2)
-			e:Dock(FILL)
-			e:DockMargin(5,5,5,5)
-			e:SetTall(30)
-			e:SetMultiline(true)
-			e:SetText(L.working_at)
-			e:SetEnabled(false)
-			e.PaintOffset = 5
+			local chs = vgui.Create 'DScrollPanel'
+			chs:SetParent(pnl2)
+			chs:Dock(FILL)
+			chs:DockMargin(5,5,5,5)
 
-			f.e_fulldesc = e
+			local function deleteCharPreset(key)
+				local deltable = octolib.vars.get('dbg_charset')
+				table.remove(deltable, key)
+				octolib.vars.set('dbg_charset', deltable)
+			end
+
+			local function saveCharPreset(s)
+				local chardelete = octolib.vars.get('dbg_charset')
+				local charVal = 1
+				if next(chardelete) ~= nil then
+					charVal = #chardelete+1
+				end
+				chardelete[charVal] = {
+					['dbg_name'] = f.e_name:GetValue(),
+					['dbg_model'] = cvModel:GetString(),
+					['dbg_skin'] = cvSkin:GetString(),
+					['dbg_job'] = cvJob:GetString(),
+					['dbg_desc'] = octolib.vars.get('dbg_desc'),
+					['dbg_userlabel'] = s
+				}
+				octolib.vars.set('dbg_charset', chardelete)
+			end
+
+			local function loadCharPreset(value)
+				f.e_name:SetValue(value['dbg_name'])
+				f.e_desc:SetValue(value['dbg_desc'])
+				for i = 1, #f.e_job.Choices do
+					if f.e_job:GetOptionData(i) == value['dbg_job'] then
+						f.e_job:ChooseOptionID(i)
+						break
+					end
+				end
+				for i = 1, #f.e_model.Choices do
+					if f.e_model:GetOptionData(i)[1] == value['dbg_model'] then
+						f.e_model:ChooseOptionID(i)
+						break
+					end
+				end
+				for i = 1, #f.e_skin.Choices do
+					if f.e_skin:GetOptionData(i) == tonumber(value['dbg_skin']) then
+						f.e_skin:ChooseOptionID(i)
+						break
+					end
+				end
+			end
+
+			local function getRusJobName(value)
+				for _, job in ipairs(RPExtraTeams) do
+					if not job.noPreference and (not job.hidden or isfunction(job.customCheck) and select(1, job.customCheck(ply))) then
+						if value['dbg_job'] == job.command then
+							return job.name
+						end
+					end
+				end
+				return nil
+			end
+
+			local function updateCharSet()
+				chs:GetCanvas():Clear()
+				local chartable = octolib.vars.get('dbg_charset')
+				for key, value in pairs(chartable) do
+					local charPanel = vgui.Create 'DPanel' --BackPanel
+					charPanel:SetParent(chs)
+					charPanel:Dock(TOP)
+					charPanel:DockMargin(0,0,0,10)
+					charPanel:SetTall(85)
+
+					local ul = vgui.Create 'DLabel' --UserLabel
+					ul:SetParent(charPanel)
+					ul:Dock(TOP)
+					ul:DockMargin(10,3,10,0)
+					ul:SetFont('f4.charset-label')
+					ul:SetContentAlignment(5)
+					ul:SetTall(25)
+					ul:SetText(value['dbg_userlabel'])
+
+					local chname = vgui.Create 'DPanel' --CharacterName
+					chname:SetParent(charPanel)
+					chname:Dock(TOP)
+					chname:SetTall(18)
+					chname:DockMargin(10,5,10,10)
+					chname:SetPaintBackground(false)
+
+					local icoName = chname:Add 'DImage'
+					icoName:SetSize(18, 18)
+					icoName:SetImage('octoteam/icons/man_m.png')
+					icoName:SetPos(0,0)
+
+					local labName = chname:Add 'DLabel'
+					labName:SetFont('f4.charset-text')
+					labName:SetContentAlignment(4)
+					labName:SetTall(25)
+					labName:SetWide(300)
+					labName:SetText(value['dbg_name'])
+					labName:DockMargin(21,0,10,0)
+					labName:Dock(LEFT)
+
+					local chjob = vgui.Create 'DPanel' --CharacterJob
+					chjob:SetParent(charPanel)
+					chjob:Dock(TOP)
+					chname:SetTall(18)
+					chjob:DockMargin(10,0,10,10)
+					chjob:SetPaintBackground(false)
+
+					local icoJob = chjob:Add 'DImage'
+					icoJob:SetSize(18, 18)
+					icoJob:SetImage('octoteam/icons/clipboard.png')
+					icoJob:SetPos(0,0)
+
+					local labJob = chjob:Add 'DLabel'
+					labJob:SetFont('f4.charset-text')
+					labJob:SetContentAlignment(4)
+					labJob:SetTall(25)
+					labJob:SetWide(300)
+					labJob:SetText(getRusJobName(value))
+					labJob:DockMargin(21,0,10,5)
+					labJob:Dock(LEFT)
+
+					local chb = vgui.Create 'DButton' --Load
+					chb:SetParent(charPanel)
+					chb:SetTall(25)
+					chb:SetEnabled(true)
+					chb:SetText("Загрузить")
+					function chb:PerformLayout()
+						self:SizeToContentsX(20)
+						self:AlignBottom(5)
+						self:AlignRight(5)
+					end
+					function chb:DoClick()
+						loadCharPreset(value)
+					end
+
+					local chbClear = vgui.Create 'DButton' --Delete
+					chbClear:SetParent(charPanel)
+					chbClear:SetText('')
+					chbClear:SetSize(24,24)
+					chbClear.icon=Material(octolib.icons.silk16('cancel'))
+					chbClear.Paint = function(self, w, h)
+						surface.SetMaterial(self.icon)
+						if self:IsHovered() then
+							surface.SetDrawColor(255, 255, 255, 255)
+						else
+							surface.SetDrawColor(255,255,255, 20)
+							
+						end
+						surface.SetMaterial(self.icon)
+							surface.DrawTexturedRect(4, 4, 16, 16)
+					end
+					chbClear:AddHint("Удалить")
+					function chbClear:DoClick()
+						Derma_Query('Вы уверены, что хотите удалить этого персонажа?', 'Удаление персонажа', L.yes, function()
+							deleteCharPreset(key)
+							updateCharSet()
+						end, L.no)
+					end
+					function chbClear:PerformLayout()
+						self:SizeToContentsX(20)
+						self:AlignTop(2)
+						self:AlignRight(4)
+					end
+				end
+			end
+
+			local chb = vgui.Create 'DButton' --Save
+			chb:SetParent(pnl2)
+			chb:Dock(BOTTOM)
+			chb:SetTall(30)
+			chb:DockMargin(10,0,10,5)
+			chb:SetEnabled(true)
+			chb:SetText(L.save)
+			chb.DoClick = octolib.fStringRequest("Сохранение", "Напиши название для твоего пресета","",function(s)
+				saveCharPreset(s)
+				updateCharSet()
+			end)
+			updateCharSet()
 		end
 	end,
 },{
