@@ -111,7 +111,7 @@ CFG.forumRewardHandler = function(ply, forumData, finish)
 	})
 end
 
--- local launcherReward = 30000
+local launcherReward = 30000
 -- hook.Add('octolib.family.created', 'dbg-rewards', function(family)
 -- 	local ply = player.GetBySteamID64(family.steamids[1])
 -- 	if not IsValid(ply) then return end
