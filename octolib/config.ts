@@ -1,4 +1,4 @@
-import Config from './octolib/core/config'
+import Config from './core/config'
 
 const config: Config = {
 	dev: true,
@@ -37,3 +37,4 @@ const config: Config = {
 }
 
 export default config
+ 

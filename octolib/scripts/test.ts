@@ -3,7 +3,7 @@ import './_prerun'
 import { empty, fail, info, ok } from '../core/log'
 import { tester } from '../core/tester'
 import { start } from '../core/gameServer'
-import config from '../../config'
+import config from '../config'
 
 type TestSection = {
 	name: string

@@ -3,7 +3,7 @@ import './_prerun'
 import { resolve } from 'path'
 import { info, ok } from '../core/log'
 import { app, tester } from '../core/tester'
-import config from '../../config'
+import config from '../config'
 
 import './start-server'
 

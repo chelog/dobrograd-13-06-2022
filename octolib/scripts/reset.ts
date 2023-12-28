@@ -4,7 +4,7 @@ import fs from 'fs'
 import path from 'path'
 import mysql from 'mysql2/promise'
 import ora from 'ora'
-import config from '../../config'
+import config from '../config'
 
 async function reset() {
 	const spinner = ora({

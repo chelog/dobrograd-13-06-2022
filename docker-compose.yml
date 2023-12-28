@@ -14,7 +14,7 @@ services:
     container_name: dbg_db
     image: mariadb:10.7
     environment:
-      MARIADB_ALLOW_EMPTY_ROOT_PASSWORD: true
+      MARIADB_ALLOW_EMPTY_ROOT_PASSWORD: 1
       MARIADB_DATABASE: gmod_dobrograd
     volumes:
       - ./docker/runtime-data/mysql:/var/lib/mysql

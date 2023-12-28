@@ -1,6 +1,6 @@
 import fs from 'fs'
 import path from 'path'
-import config from '../../config'
+import config from '../config'
 
 const envPath = path.resolve(__dirname, '../../garrysmod/addons/util-lsac')
 if (fs.existsSync(envPath))

@@ -1,5 +1,4 @@
 /docker/runtime-data
-config.ts
 
 # ignore assets
 *.jpg

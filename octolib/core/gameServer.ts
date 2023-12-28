@@ -2,7 +2,7 @@ import '../scripts/generate-env'
 
 import childProcess from 'child_process'
 import { info, ok, fail } from '../core/log'
-import config from '../../config'
+import config from '../config'
 
 export const start = () => {
 	info('Launching game server...')
