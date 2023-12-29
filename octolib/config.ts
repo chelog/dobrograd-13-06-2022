@@ -5,12 +5,12 @@ const config: Config = {
 	serverGroupID: 'test',
 	serverID: 'test',
 
-	tickrate: 66,
+	tickrate: 16,
 	port: 27015,
-	language: 'en',
-	workshopCollection: -1,
-	gamemode: 'sandbox',
-	map: 'gm_construct',
+	language: 'ru',
+	workshopCollection: 570795184,
+	gamemode: 'darkrp',
+	map: 'rp_ndbg_winter',
 	maxPlayers: 16,
 	hibernateThink: true,
 
@@ -25,14 +25,14 @@ const config: Config = {
 	webhooks: {},
 
 	db: {
-		host: 'localhost',
+		host: 'mariadb',
 		user: 'root',
 		pass: '',
 		port: 3306,
 
-		main: 'test',
-		admin: 'test',
-		shop: 'test',
+		main: 'gmod_dobrograd',
+		admin: 'gmod_dobrograd',
+		shop: 'gmod_dobrograd',
 	},
 }
 

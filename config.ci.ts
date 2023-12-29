@@ -1,22 +1,58 @@
-import base from './config.example'
+import Config from './octolib/core/config'
 
-const config = Object.assign({}, base)
+export interface DobrogradConfig extends Config {
+	defaultHostName?: string
+	adminMention?: string
+	testEnabled?: boolean
+	disableGCrash?: boolean
+	requireLauncher?: boolean
+}
 
-config.port = 28015
-config.hibernateThink = true
+const config: DobrogradConfig = {
+	dev: true,
+	serverGroupID: 'dbg_dev',
+	serverID: 'dbg_dev',
 
-config.octoservicesURL = 'https://octothorp.team/api'
-config.keys.services = ''
+	tickrate: 16,
+	port: 27015,
+	language: 'ru',
+	workshopCollection: 570795184,
+	gamemode: 'darkrp',
+	map: 'rp_evocity_dbg_230226',
+	maxPlayers: 16,
+	hibernateThink: true,
 
-config.db = {
-	host: 'mariadb',
-	user: 'root',
-	pass: 'octoteam ci/cd',
-	port: 3306,
+	octoservicesURL: 'https://octothorp.team/api',
 
-	main: 'gmod_dbg_dev',
-	admin: 'gmod_dbg_dev',
-	shop: 'gmod_dbg_dev',
+	serverAccount: '',
+	steamKey: '',
+	imgurKey: '',
+
+	keys: {
+		services: '',
+		cats: '',
+		logs: '',
+		test: '',
+	},
+
+	webhooks: {},
+
+	db: {
+		host: 'mariadb',
+		user: 'root',
+		pass: '',
+		port: 3306,
+
+		main: 'gmod_dobrograd',
+		admin: 'gmod_dobrograd',
+		shop: 'gmod_dobrograd',
+	},
+
+	disableGCrash: true,
+	testEnabled: false,
+	defaultHostName: 'DBG DEV',
+	adminMention: '',
+	requireLauncher: false,
 }
 
 export default config
