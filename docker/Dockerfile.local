@@ -64,7 +64,7 @@ RUN curl -o ./content.zip -L https://www.dropbox.com/s/al7ruvnda4m8qgf/content.z
 	&& mkdir -p ./content/cstrike \
 	&& unzip ./content.zip -d ./content/cstrike \
 	&& rm ./content.zip \
-	&& echo '"mountcfg" {"cstrike" "/home/contrainer/cstrike"}' > /home/container/gameserver/garrysmod/cfg/mount.cfg
+	&& echo '"mountcfg" {"cstrike" "/home/container/content/cstrike"}' > /home/container/gameserver/garrysmod/cfg/mount.cfg
 
 EXPOSE 27015/tcp 27015/udp
 
